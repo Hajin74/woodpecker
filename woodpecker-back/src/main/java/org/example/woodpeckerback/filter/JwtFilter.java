@@ -31,19 +31,23 @@ public class JwtFilter extends OncePerRequestFilter {
         String authorization = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
+            log.info("cookie: {}, {}", cookie.getName(), cookie.getValue());
             if (cookie.getName().equals("Authorization")) {
                 authorization = cookie.getValue();
             }
         }
 
         if (authorization == null) {
+            log.info("Authorization is null");
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = authorization;
+        log.info("JwtFilter token: {}", token);
 
         if (jwtService.isExpired(token)) {
+            log.info("Token is expired");
             filterChain.doFilter(request, response);
             return;
         }
@@ -57,6 +61,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 .kakaoId(kakaoId)
                 .username(username)
                 .build();
+
+        log.info("jwtFilter User: {}", user.toString());
 
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(user);
 
