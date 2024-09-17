@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.woodpeckerback.dto.CustomOAuth2User;
 import org.example.woodpeckerback.entity.User;
 import org.example.woodpeckerback.service.JwtService;
@@ -16,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -23,6 +25,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String requestUri = request.getRequestURI();
+        log.info("jwtFilter URI: {}", requestUri);
+
         String authorization = null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {

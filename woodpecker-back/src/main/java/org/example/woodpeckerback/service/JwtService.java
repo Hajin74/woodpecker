@@ -2,6 +2,7 @@ package org.example.woodpeckerback.service;
 
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
@@ -9,15 +10,14 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+@Slf4j
 @Component
-@RequiredArgsConstructor
 public class JwtService {
 
     private SecretKey secretKey;
 
-    public JwtService(@Value("${SECRET}")String secret) {
-        secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
-
+    public JwtService(@Value("${SECRET}") String secret) {
+        this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
     public Long getId(String token) {
@@ -29,12 +29,10 @@ public class JwtService {
     }
 
     public String getUsername(String token) {
-
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
     }
 
     public Boolean isExpired(String token) {
-
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
@@ -48,4 +46,5 @@ public class JwtService {
                 .signWith(secretKey)
                 .compact();
     }
+
 }
