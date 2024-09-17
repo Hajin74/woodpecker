@@ -1,9 +1,10 @@
 package org.example.woodpeckerback.dto;
 
-public record NaverBookResponse(
-        Long isbn,
-        String title,
-        String author,
-        String publisher,
-        String description) {
+import java.util.List;
+
+public record NaverBookApiResponse(
+        Integer total,
+       Integer start,
+       Integer display,
+       List<NaverBookItem> items) {
 }
