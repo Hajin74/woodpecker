@@ -27,8 +27,12 @@ public class CustomOAuth2User implements OAuth2User {
         return user.getUsername();
     }
 
-    public Long getKakaoId() {
+    public Long getKakaoId() { // 카카오에서 주는 아이디
         return user.getKakaoId();
+    }
+
+    public Long getId() { // DB 에서 생성되는 아이디
+        return user.getId();
     }
 
 }
