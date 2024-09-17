@@ -9,7 +9,7 @@ const App = () => {
   const [data, setData] = useState('');
 
   const getData = () => {
-    fetch("http://localhost:8080/my", {
+    fetch("http://localhost:8080/test", {
       method: "GET",
       credentials: 'include'
     })
