@@ -10,12 +10,10 @@ import org.example.woodpeckerback.service.BookService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-//@Component
 @RequiredArgsConstructor
 public class BookResolver {
 

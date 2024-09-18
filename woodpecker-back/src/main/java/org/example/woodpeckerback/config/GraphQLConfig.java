@@ -13,8 +13,7 @@ import java.util.Map;
 public class GraphQLConfig extends DataFetcherExceptionResolverAdapter {
     @Override
     protected GraphQLError resolveToSingleError(Throwable ex, DataFetchingEnvironment env) {
-        if (ex instanceof CustomException) {
-            CustomException customException = (CustomException) ex;
+        if (ex instanceof CustomException customException) {
             return GraphqlErrorBuilder.newError(env)
                     .message(customException.getErrorCode().getErrorMessage())
                     .extensions(Map.of("code", customException.getErrorCode().name()))

@@ -1,7 +1,9 @@
 package org.example.woodpeckerback.exception;
 
 import graphql.ErrorClassification;
+import lombok.Getter;
 
+@Getter
 public class CustomException extends GraphQLException {
 
     private final ErrorCode errorCode;
@@ -9,10 +11,6 @@ public class CustomException extends GraphQLException {
     public CustomException(ErrorCode errorCode) {
         super(errorCode.getErrorMessage());
         this.errorCode = errorCode;
-    }
-
-    public ErrorCode getErrorCode() {
-        return errorCode;
     }
 
     @Override
