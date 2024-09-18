@@ -9,6 +9,7 @@ import org.example.woodpeckerback.entity.LikeBook;
 import org.example.woodpeckerback.entity.SaveBook;
 import org.example.woodpeckerback.entity.User;
 import org.example.woodpeckerback.exception.CustomException;
+import org.example.woodpeckerback.exception.ErrorCode;
 import org.example.woodpeckerback.repository.BookRepository;
 import org.example.woodpeckerback.repository.LikeBookRepository;
 import org.example.woodpeckerback.repository.SaveBookRepository;
@@ -71,7 +72,7 @@ public class BookService {
     @Transactional
     public boolean saveBook(Long userId, NaverBookItem naverBookItem) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomException("해당 사용자는 존재하지 않습니다."));
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
         Optional<Book> targetBook = bookRepository.findByIsbn(naverBookItem.isbn());
 
         Book book;
@@ -105,17 +106,17 @@ public class BookService {
     @Transactional
     public boolean likeBook(Long userId, String isbn) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new CustomException("해당 사용자는 존재하지 않습니다."));
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Optional<Book> targetBook = bookRepository.findByIsbn(isbn);
         if (targetBook.isEmpty()) {
-            throw new CustomException("해당 책은 존재하지 않습니다.");
+            throw new CustomException(ErrorCode.BOOK_NOT_FOUND);
         }
         Book book = targetBook.get();
 
         Optional<LikeBook> likeBook = likeBookRepository.findByUserIdAndBookId(userId, book.getId());
         if (likeBook.isPresent()) {
-            throw new CustomException("이미 좋아요한 책입니다.");
+            throw new CustomException(ErrorCode.BOOK_ALREADY_LIKED);
         } else {
             LikeBook newLike = LikeBook.builder()
                     .user(user)
