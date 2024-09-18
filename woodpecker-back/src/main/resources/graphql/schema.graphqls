@@ -4,6 +4,7 @@ type Query {
 
 type Mutation {
     saveBook(input: SaveBookInput!): SaveBookResponse!
+    likeBook(isbn: String!): LikeBookResponse!
 }
 
 input SaveBookInput {
@@ -15,6 +16,11 @@ input SaveBookInput {
 }
 
 type SaveBookResponse {
+    success: Boolean!
+    message: String!
+}
+
+type LikeBookResponse {
     success: Boolean!
     message: String!
 }
