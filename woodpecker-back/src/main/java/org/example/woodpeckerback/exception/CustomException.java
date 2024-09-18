@@ -1,16 +1,23 @@
 package org.example.woodpeckerback.exception;
 
-import lombok.Getter;
-import lombok.Setter;
+import graphql.ErrorClassification;
 
-@Getter
-@Setter
-public class CustomException extends RuntimeException {
-    private final ErrorCode errorCode;
+public class CustomException extends GraphQLException {
+    public String message;
 
-    public CustomException(ErrorCode errorCode) {
-        super(errorCode.getErrorMessage());
-        this.errorCode = errorCode;
+    public CustomException(String message) {
+        super(message);
+        this.message = message;
+    }
+
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public ErrorClassification getErrorType() {
+        return ErrorType.CustomException;
     }
 
 }
