@@ -127,4 +127,16 @@ public class BookService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public NaverBookItem shareBook(Long bookId) {
+        Optional<Book> targetBook = bookRepository.findById(bookId);
+        if (targetBook.isEmpty()) {
+            throw new CustomException(ErrorCode.BOOK_NOT_FOUND);
+            // todo: rest 전용 예외 만들긴
+        }
+        Book book = targetBook.get();
+
+        return new NaverBookItem(book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDescription(), book.getIsbn());
+    }
+
 }

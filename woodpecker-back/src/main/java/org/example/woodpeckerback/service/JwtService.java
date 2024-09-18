@@ -1,5 +1,6 @@
 package org.example.woodpeckerback.service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,14 @@ public class JwtService {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
+    public Claims validateToken(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
     public String createJwt(Long id, Long kakaoId, String username, Long expiredMs) {
         return Jwts.builder()
                 .claim("id", id)
@@ -43,6 +52,19 @@ public class JwtService {
                 .claim("username", username)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String createShareToken(Long userId, Long bookId) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + 10 * 60 * 1000); // 10분 유효
+
+        return Jwts.builder()
+                .subject(String.valueOf(userId))
+                .claim("bookId", bookId)
+                .issuedAt(now)
+                .expiration(expiryDate)
                 .signWith(secretKey)
                 .compact();
     }
