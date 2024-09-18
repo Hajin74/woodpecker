@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class SavedBook {
+public class LikeBook {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class SavedBook {
     private Book book;
 
     @Builder
-    public SavedBook(User user, Book book) {
+    public LikeBook(User user, Book book) {
         this.user = user;
         this.book = book;
     }

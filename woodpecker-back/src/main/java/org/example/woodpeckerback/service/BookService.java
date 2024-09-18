@@ -1,13 +1,16 @@
 package org.example.woodpeckerback.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.woodpeckerback.dto.NaverBookApiResponse;
 import org.example.woodpeckerback.dto.NaverBookItem;
 import org.example.woodpeckerback.entity.Book;
-import org.example.woodpeckerback.entity.SavedBook;
+import org.example.woodpeckerback.entity.LikeBook;
+import org.example.woodpeckerback.entity.SaveBook;
 import org.example.woodpeckerback.entity.User;
 import org.example.woodpeckerback.repository.BookRepository;
-import org.example.woodpeckerback.repository.SavedBookRepository;
+import org.example.woodpeckerback.repository.LikeBookRepository;
+import org.example.woodpeckerback.repository.SaveBookRepository;
 import org.example.woodpeckerback.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +21,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BookService {
@@ -37,7 +40,8 @@ public class BookService {
 
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
-    private final SavedBookRepository savedBookRepository;
+    private final SaveBookRepository saveBookRepository;
+    private final LikeBookRepository likeBookRepository;
     private final WebClient.Builder webClientBuilder;
 
     @Transactional(readOnly = true)
@@ -60,7 +64,7 @@ public class BookService {
                 .retrieve()
                 .bodyToMono(NaverBookApiResponse.class);
 
-       return responseMono.block();
+        return responseMono.block();
     }
 
     @Transactional
@@ -84,15 +88,40 @@ public class BookService {
             book = targetBook.get();
         }
 
-        boolean alreadySaved = savedBookRepository.existsByUserIdAndBookId(userId, book.getId());
+        boolean alreadySaved = saveBookRepository.existsByUserIdAndBookId(userId, book.getId());
         if (alreadySaved) {
             return false;
         } else {
-            SavedBook savedBook = SavedBook.builder()
+            SaveBook saveBook = SaveBook.builder()
                     .user(user)
                     .book(book)
                     .build();
-            savedBookRepository.save(savedBook);
+            saveBookRepository.save(saveBook);
+            return true;
+        }
+    }
+
+    @Transactional
+    public boolean likeBook(Long userId, String isbn) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User not Found"));
+
+        Optional<Book> targetBook = bookRepository.findByIsbn(isbn);
+        if (targetBook.isEmpty()) {
+            return false; // 책이 존재하지 않음
+        }
+        Book book = targetBook.get();
+
+        Optional<LikeBook> likeBook = likeBookRepository.findByUserIdAndBookId(userId, book.getId());
+        if (likeBook.isPresent()) {
+            log.info("already liked");
+            return false;
+        } else {
+            LikeBook newLike = LikeBook.builder()
+                    .user(user)
+                    .book(book)
+                    .build();
+            likeBookRepository.save(newLike);
             return true;
         }
     }
