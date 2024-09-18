@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.woodpeckerback.dto.CustomOAuth2User;
 import org.example.woodpeckerback.service.JwtService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -27,9 +28,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Long kakaoId = customUserDetails.getKakaoId();
         String username = customUserDetails.getName();
 
-        String token = jwtService.createJwt(id, kakaoId, username, 60 * 60 * 60L);
+        String authorization = jwtService.createJwt(id, kakaoId, username, 60 * 60 * 60L);
 
-        response.addCookie(createCookie("Authorization", token));
+        response.addCookie(createCookie("Authorization", authorization));
         response.sendRedirect("http://localhost:3000/");
     }
 
