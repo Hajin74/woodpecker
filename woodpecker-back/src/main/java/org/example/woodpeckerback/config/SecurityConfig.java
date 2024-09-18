@@ -67,7 +67,7 @@ public class SecurityConfig {
         /* 경로별 인가 작업 */
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/graphql").permitAll()
+                        .requestMatchers("/").permitAll()
                         .anyRequest().authenticated());
 
         /* 필터 */
