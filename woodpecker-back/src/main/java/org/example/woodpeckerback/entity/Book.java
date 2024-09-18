@@ -15,7 +15,7 @@ public class Book {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private int isbn;
+    private String isbn;
 
     @Column(nullable = false)
     private String title;
@@ -27,7 +27,7 @@ public class Book {
     private String description;
 
     @Builder
-    public Book(int isbn, String title, String author, String publisher, String description) {
+    public Book(String isbn, String title, String author, String publisher, String description) {
         this.isbn = isbn;
         this.title = title;
         this.author = author;

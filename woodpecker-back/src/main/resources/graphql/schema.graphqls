@@ -1,0 +1,20 @@
+type Query {
+    hello: String
+}
+
+type Mutation {
+    saveBook(input: SaveBookInput!): SaveBookResponse!
+}
+
+input SaveBookInput {
+    isbn: String!
+    title: String!
+    author: String
+    description: String
+    publisher: String
+}
+
+type SaveBookResponse {
+    success: Boolean!
+    message: String!
+}

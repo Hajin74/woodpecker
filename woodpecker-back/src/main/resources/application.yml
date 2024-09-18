@@ -16,6 +16,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  graphql:
+    graphiql:
+      enabled: true
+    schema:
+      printer:
+        enabled: true
+      locations: classpath:graphql/**/
+
 logging:
   level:
     org:
