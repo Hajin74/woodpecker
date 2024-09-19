@@ -1,3 +1,5 @@
+scalar Long
+
 type Query {
     hello: String
 }
@@ -6,6 +8,7 @@ type Mutation {
     saveBook(input: SaveBookInput!): SaveBookResponse!
     likeBook(isbn: String!): LikeBookResponse!
     saveNote(input: SaveNoteInput!): SaveNoteResponse!
+    deleteNote(noteId: Long!): DeleteNoteResponse!
 }
 
 input SaveBookInput {
@@ -32,6 +35,11 @@ type LikeBookResponse {
 }
 
 type SaveNoteResponse {
+    success: Boolean!
+    message: String!
+}
+
+type DeleteNoteResponse {
     success: Boolean!
     message: String!
 }
