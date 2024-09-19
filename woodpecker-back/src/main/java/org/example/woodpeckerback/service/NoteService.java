@@ -46,4 +46,20 @@ public class NoteService {
         noteRepository.save(newNote);
     }
 
+    @Transactional
+    public void deleteNote(Long userId, Long noteId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        Note note = noteRepository.findById(noteId).orElseThrow(
+                () -> new CustomException(ErrorCode.NOTE_NOT_FOUND));
+
+        // 본인 노트가 맞는지 확인
+        if (!note.getUser().getId().equals(user.getId())) {
+            throw new CustomException(ErrorCode.NOTE_ACCESS_DENIED);
+        }
+
+        // 노트 비활성화
+        note.softDelete();
+    }
+
 }
