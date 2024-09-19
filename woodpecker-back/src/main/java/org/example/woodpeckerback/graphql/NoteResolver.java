@@ -2,6 +2,7 @@ package org.example.woodpeckerback.graphql;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.woodpeckerback.dto.DeleteNoteResponse;
 import org.example.woodpeckerback.dto.SaveNoteInput;
 import org.example.woodpeckerback.dto.SaveNoteResponse;
 import org.example.woodpeckerback.service.NoteService;
@@ -23,4 +24,11 @@ public class NoteResolver {
         return new SaveNoteResponse(true, "success!");
     }
 
+    @MutationMapping
+    public DeleteNoteResponse deleteNote(@Argument("noteId") Long noteId) {
+        log.info("deleteNote - {}", noteId);
+        noteService.deleteNote(2L, noteId);
+
+        return new DeleteNoteResponse(true, "success!");
+    }
 }

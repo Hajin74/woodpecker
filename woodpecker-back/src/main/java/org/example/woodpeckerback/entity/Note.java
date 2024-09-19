@@ -27,11 +27,15 @@ public class Note {
     private boolean isDeleted;
 
     @Builder
-    public Note(Book book, User user, String content, boolean isDeleted) {
+    public Note(Book book, User user, String content) {
         this.book = book;
         this.user = user;
         this.content = content;
-        this.isDeleted = isDeleted;
+        this.isDeleted = false;
+    }
+
+    public void softDelete() {
+        this.isDeleted = true;
     }
 
 }

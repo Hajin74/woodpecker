@@ -62,6 +62,7 @@ dependencies {
     // GraphQL
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
     testImplementation 'org.springframework.graphql:spring-graphql-test'
+    implementation 'com.graphql-java:graphql-java-extended-scalars:19.0'
 }
 
 tasks.named('test') {
