@@ -9,6 +9,7 @@ type Mutation {
     likeBook(isbn: String!): LikeBookResponse!
     saveNote(input: SaveNoteInput!): SaveNoteResponse!
     deleteNote(noteId: Long!): DeleteNoteResponse!
+    getDetailNote(noteId: Long!): ReadDetailNoteResponse!
 }
 
 input SaveBookInput {
@@ -40,6 +41,11 @@ type SaveNoteResponse {
 }
 
 type DeleteNoteResponse {
+    success: Boolean!
+    message: String!
+}
+
+type ReadDetailNoteResponse {
     success: Boolean!
     message: String!
 }
