@@ -2,6 +2,8 @@ package org.example.woodpeckerback.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.woodpeckerback.dto.NoteDetailResponse;
+import org.example.woodpeckerback.dto.SaveNoteInput;
 import org.example.woodpeckerback.entity.Book;
 import org.example.woodpeckerback.entity.Note;
 import org.example.woodpeckerback.entity.User;
@@ -11,7 +13,6 @@ import org.example.woodpeckerback.repository.BookRepository;
 import org.example.woodpeckerback.repository.NoteRepository;
 import org.example.woodpeckerback.repository.SaveBookRepository;
 import org.example.woodpeckerback.repository.UserRepository;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +31,12 @@ public class NoteService {
     private final SaveBookRepository saveBookRepository;
 
     @Transactional
-    public void saveNote(Long userId, String isbn, String content) {
+    public void saveNote(Long userId, SaveNoteInput input) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        Book book = bookRepository.findByIsbn(isbn).orElseThrow(
+        Book book = bookRepository.findByIsbn(input.getIsbn()).orElseThrow(
                 () -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
-        boolean isSavedBook = saveBookRepository.existsByUserIdAndBookIsbn(userId, isbn);
+        boolean isSavedBook = saveBookRepository.existsByUserIdAndBookIsbn(userId, input.getIsbn());
 
         if (!isSavedBook) {
             throw new CustomException(ErrorCode.BOOK_NOT_SAVED);
@@ -44,7 +45,7 @@ public class NoteService {
         Note newNote = Note.builder()
                 .book(book)
                 .user(user)
-                .content(content)
+                .content(input.getContent())
                 .build();
         noteRepository.save(newNote);
     }
@@ -66,10 +67,10 @@ public class NoteService {
     }
 
     @Transactional(readOnly = true)
-    public String getDetailNote(Long userId, Long noteId) {
+    public NoteDetailResponse getDetailNote(Long userId, Long noteId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        Note note = noteRepository.findById(noteId).orElseThrow(
+        Note note = noteRepository.findByIdAndIsDeletedFalse(noteId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOTE_NOT_FOUND));
 
         // 본인 노트가 맞는지 확인
@@ -77,18 +78,18 @@ public class NoteService {
             throw new CustomException(ErrorCode.NOTE_ACCESS_DENIED);
         }
 
-        return note.getContent();
+        return new NoteDetailResponse(note.getId(), user.getId(), note.getBook().getId(), note.getContent());
     }
 
     @Transactional(readOnly = true)
-    public List<String> getNotes(Long userId, String isbn) {
+    public List<NoteDetailResponse> getNotesByBook(Long userId, String isbn) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
         List<Note> notes = noteRepository.findAllByUserIdAndBookIsbn(user.getId(), isbn);
         Collections.reverse(notes);
 
         return notes.stream()
-                .map(Note::getContent)
+                .map((note) -> new NoteDetailResponse(note.getId(), note.getUser().getId(), note.getBook().getId(), note.getContent()))
                 .collect(Collectors.toList());
     }
 

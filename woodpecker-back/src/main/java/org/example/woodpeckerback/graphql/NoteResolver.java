@@ -1,11 +1,9 @@
 package org.example.woodpeckerback.graphql;
 
+import graphql.GraphQLContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.woodpeckerback.dto.DeleteNoteResponse;
-import org.example.woodpeckerback.dto.ReadDetailNoteResponse;
-import org.example.woodpeckerback.dto.SaveNoteInput;
-import org.example.woodpeckerback.dto.SaveNoteResponse;
+import org.example.woodpeckerback.dto.*;
 import org.example.woodpeckerback.service.NoteService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -22,35 +20,37 @@ public class NoteResolver {
     private final NoteService noteService;
 
     @MutationMapping
-    public SaveNoteResponse saveNote(@Argument("input") SaveNoteInput input) {
-        log.info("saveNote - {}", input.getIsbn());
-        noteService.saveNote(2L, input.getIsbn(), input.getContent());
-        return new SaveNoteResponse(true, "success!");
+    public SaveNoteResponse saveNote(@Argument("input") SaveNoteInput input, GraphQLContext context) {
+        Long userId = context.get("userId");
+        log.info("saveNote - isbn: {}, user: {}", input.getIsbn(), userId);
+
+        noteService.saveNote(userId, input);
+        return new SaveNoteResponse(true, "(Isbn: " + input.getIsbn() + ") 에 적은 노트가 성공적으로 작성되었습니다.");
     }
 
     @MutationMapping
-    public DeleteNoteResponse deleteNote(@Argument("noteId") Long noteId) {
+    public DeleteNoteResponse deleteNote(@Argument("noteId") Long noteId, GraphQLContext context) {
+        Long userId = context.get("userId");
         log.info("deleteNote - {}", noteId);
-        noteService.deleteNote(2L, noteId);
+        noteService.deleteNote(userId, noteId);
 
-        return new DeleteNoteResponse(true, "success!");
+        return new DeleteNoteResponse(true, "(noteId: " +  noteId + ") 가 성공적으로 삭제되었습니다.");
     }
 
     @MutationMapping
-    public ReadDetailNoteResponse getDetailNote(@Argument("noteId") Long noteId) {
+    public NoteDetailResponse getDetailNote(@Argument("noteId") Long noteId, GraphQLContext context) {
+        Long userId = context.get("userId");
         log.info("getDetailNote - {}", noteId);
-        String result = noteService.getDetailNote(2L, noteId);
 
-        return new ReadDetailNoteResponse(true, result);
+        return noteService.getDetailNote(userId, noteId);
     }
 
     @MutationMapping
-    public List<ReadDetailNoteResponse> getNotes(@Argument("isbn") String isbn) {
-        log.info("getNotes book - {}", isbn);
-        List<String> result = noteService.getNotes(2L, isbn);
+    public List<NoteDetailResponse> getNotesByBook(@Argument("isbn") String isbn, GraphQLContext context) {
+        Long userId = context.get("userId");
+        log.info("getNotesByBook - {}", isbn);
 
-        return result.stream()
-                .map((r) -> new ReadDetailNoteResponse(true, r))
-                .collect(Collectors.toList());
+        return noteService.getNotesByBook(userId, isbn);
     }
+
 }

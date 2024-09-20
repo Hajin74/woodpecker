@@ -3,6 +3,8 @@ package org.example.woodpeckerback.config;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
+import org.example.woodpeckerback.exception.CustomException;
+import org.example.woodpeckerback.exception.ErrorCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.graphql.server.WebGraphQlInterceptor;
@@ -31,7 +33,6 @@ public class JwtInterceptor implements WebGraphQlInterceptor {
 
         HttpHeaders headers = request.getHeaders();
         String authorization = extractAuthorizationToken(headers.getFirst(HttpHeaders.COOKIE));
-//        log.info("request authorization = {}", authorization);
 
         try {
             // JWT 토큰 검증
@@ -43,12 +44,18 @@ public class JwtInterceptor implements WebGraphQlInterceptor {
 
             log.info("JWT claims: {}", claims);
 
+            // 사용자 정보 attributes 에 저장
+            request.configureExecutionInput((executionInput, builder) ->
+                    builder.graphQLContext(ctx -> ctx.put("userId", claims.get("id", Long.class)))
+                    .build()
+            );
+
             // 토큰이 유효한 경우 요청을 계속 진행
             return chain.next(request);
         } catch (Exception e) {
             // 토큰 검증 실패 시 예외 처리
             log.error("Invalid JWT token", e);
-            throw new RuntimeException("Invalid JWT token");
+            throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
         }
     }
 

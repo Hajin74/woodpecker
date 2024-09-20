@@ -7,10 +7,10 @@ import lombok.Setter;
 @Setter
 public class ReadDetailNoteResponse {
     private boolean success;
-    private String message;
+    private NoteDetailResponse noteDetailResponse;
 
-    public ReadDetailNoteResponse(boolean success, String message) {
+    public ReadDetailNoteResponse(boolean success, NoteDetailResponse noteDetailResponse) {
         this.success = success;
-        this.message = message;
+        this.noteDetailResponse = noteDetailResponse;
     }
 }
