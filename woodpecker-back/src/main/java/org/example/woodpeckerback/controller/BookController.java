@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.woodpeckerback.dto.NaverBookApiResponse;
 import org.example.woodpeckerback.dto.NaverBookItem;
+import org.example.woodpeckerback.dto.ShareBookAndNoteResponse;
 import org.example.woodpeckerback.service.BookService;
 import org.example.woodpeckerback.service.JwtService;
 import org.springframework.http.ResponseEntity;
@@ -41,14 +42,15 @@ public class BookController {
     }
 
     @GetMapping("/share")
-    public ResponseEntity<NaverBookItem> shareBook(@RequestHeader("Cookie") String cookie) {
+    public ResponseEntity<ShareBookAndNoteResponse> shareBookAndNotes(@RequestHeader("Cookie") String cookie) {
         log.info("shareBook");
         String authorization = extractAuthorizationToken(cookie);
         Claims claims = jwtService.validateToken(authorization);
+        Long userId = Long.valueOf(claims.getSubject());
         Long bookId = claims.get("bookId", Long.class);
-        log.info("book:{}", bookId);
+        log.info("book:{}, userId: {}", bookId, userId);
 
-        NaverBookItem response = bookService.shareBook(bookId);
+        ShareBookAndNoteResponse response = bookService.shareBookAndNotes(userId, bookId);
 
         return ResponseEntity.ok(response);
     }

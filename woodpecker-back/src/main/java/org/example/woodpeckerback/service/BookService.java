@@ -2,19 +2,11 @@ package org.example.woodpeckerback.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.woodpeckerback.dto.NaverBookApiResponse;
-import org.example.woodpeckerback.dto.NaverBookItem;
-import org.example.woodpeckerback.dto.SaveBookInput;
-import org.example.woodpeckerback.entity.Book;
-import org.example.woodpeckerback.entity.LikeBook;
-import org.example.woodpeckerback.entity.SaveBook;
-import org.example.woodpeckerback.entity.User;
+import org.example.woodpeckerback.dto.*;
+import org.example.woodpeckerback.entity.*;
 import org.example.woodpeckerback.exception.CustomException;
 import org.example.woodpeckerback.exception.ErrorCode;
-import org.example.woodpeckerback.repository.BookRepository;
-import org.example.woodpeckerback.repository.LikeBookRepository;
-import org.example.woodpeckerback.repository.SaveBookRepository;
-import org.example.woodpeckerback.repository.UserRepository;
+import org.example.woodpeckerback.repository.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
@@ -22,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -43,6 +38,7 @@ public class BookService {
 
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
+    private final NoteRepository noteRepository;
     private final SaveBookRepository saveBookRepository;
     private final LikeBookRepository likeBookRepository;
     private final WebClient.Builder webClientBuilder;
@@ -127,15 +123,23 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public NaverBookItem shareBook(Long bookId) {
+    public ShareBookAndNoteResponse shareBookAndNotes(Long userId, Long bookId) {
         Optional<Book> targetBook = bookRepository.findById(bookId);
         if (targetBook.isEmpty()) {
             throw new CustomException(ErrorCode.BOOK_NOT_FOUND);
             // todo: rest 전용 예외 만들긴
         }
         Book book = targetBook.get();
+        BookItemResponse bookItemResponse = new BookItemResponse(book.getId(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDescription(), book.getIsbn());
 
-        return new NaverBookItem(book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDescription(), book.getIsbn());
+        List<Note> notes = noteRepository.findAllByUserIdAndBookIsbn(userId, book.getIsbn());
+        Collections.reverse(notes);
+
+        List<NoteDetailResponse> noteDetailResponses = notes.stream()
+                .map((note) -> new NoteDetailResponse(note.getId(), note.getUser().getId(), note.getBook().getId(), note.getContent()))
+                .toList();
+
+        return new ShareBookAndNoteResponse(bookItemResponse, noteDetailResponses);
     }
 
 }
