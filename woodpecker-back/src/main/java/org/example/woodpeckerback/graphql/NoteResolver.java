@@ -3,10 +3,7 @@ package org.example.woodpeckerback.graphql;
 import graphql.GraphQLContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.woodpeckerback.dto.DeleteNoteResponse;
-import org.example.woodpeckerback.dto.ReadDetailNoteResponse;
-import org.example.woodpeckerback.dto.SaveNoteInput;
-import org.example.woodpeckerback.dto.SaveNoteResponse;
+import org.example.woodpeckerback.dto.*;
 import org.example.woodpeckerback.service.NoteService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -41,21 +38,21 @@ public class NoteResolver {
     }
 
     @MutationMapping
-    public ReadDetailNoteResponse getDetailNote(@Argument("noteId") Long noteId) {
+    public NoteDetailResponse getDetailNote(@Argument("noteId") Long noteId, GraphQLContext context) {
+        Long userId = context.get("userId");
         log.info("getDetailNote - {}", noteId);
-        String result = noteService.getDetailNote(2L, noteId);
 
-        return new ReadDetailNoteResponse(true, result);
+        return noteService.getDetailNote(userId, noteId);
     }
 
-    @MutationMapping
-    public List<ReadDetailNoteResponse> getNotes(@Argument("isbn") String isbn) {
-        log.info("getNotes book - {}", isbn);
-        List<String> result = noteService.getNotes(2L, isbn);
-
-        return result.stream()
-                .map((r) -> new ReadDetailNoteResponse(true, r))
-                .collect(Collectors.toList());
-    }
+//    @MutationMapping
+//    public List<ReadDetailNoteResponse> getNotes(@Argument("isbn") String isbn) {
+//        log.info("getNotes book - {}", isbn);
+//        List<String> result = noteService.getNotes(2L, isbn);
+//
+//        return result.stream()
+//                .map((r) -> new ReadDetailNoteResponse(true, r))
+//                .collect(Collectors.toList());
+//    }
 
 }

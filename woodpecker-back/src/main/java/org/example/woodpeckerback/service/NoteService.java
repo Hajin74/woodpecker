@@ -2,6 +2,7 @@ package org.example.woodpeckerback.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.woodpeckerback.dto.NoteDetailResponse;
 import org.example.woodpeckerback.dto.SaveNoteInput;
 import org.example.woodpeckerback.entity.Book;
 import org.example.woodpeckerback.entity.Note;
@@ -66,10 +67,10 @@ public class NoteService {
     }
 
     @Transactional(readOnly = true)
-    public String getDetailNote(Long userId, Long noteId) {
+    public NoteDetailResponse getDetailNote(Long userId, Long noteId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        Note note = noteRepository.findById(noteId).orElseThrow(
+        Note note = noteRepository.findByIdAndIsDeletedFalse(noteId).orElseThrow(
                 () -> new CustomException(ErrorCode.NOTE_NOT_FOUND));
 
         // 본인 노트가 맞는지 확인
@@ -77,7 +78,7 @@ public class NoteService {
             throw new CustomException(ErrorCode.NOTE_ACCESS_DENIED);
         }
 
-        return note.getContent();
+        return new NoteDetailResponse(note.getId(), user.getId(), note.getBook().getId(), note.getContent());
     }
 
     @Transactional(readOnly = true)
