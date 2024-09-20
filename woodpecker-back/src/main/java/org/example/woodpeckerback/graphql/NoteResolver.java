@@ -11,6 +11,9 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -39,5 +42,15 @@ public class NoteResolver {
         String result = noteService.getDetailNote(2L, noteId);
 
         return new ReadDetailNoteResponse(true, result);
+    }
+
+    @MutationMapping
+    public List<ReadDetailNoteResponse> getNotes(@Argument("isbn") String isbn) {
+        log.info("getNotes book - {}", isbn);
+        List<String> result = noteService.getNotes(2L, isbn);
+
+        return result.stream()
+                .map((r) -> new ReadDetailNoteResponse(true, r))
+                .collect(Collectors.toList());
     }
 }

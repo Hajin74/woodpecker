@@ -11,10 +11,13 @@ import org.example.woodpeckerback.repository.BookRepository;
 import org.example.woodpeckerback.repository.NoteRepository;
 import org.example.woodpeckerback.repository.SaveBookRepository;
 import org.example.woodpeckerback.repository.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -75,6 +78,18 @@ public class NoteService {
         }
 
         return note.getContent();
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getNotes(Long userId, String isbn) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        List<Note> notes = noteRepository.findAllByUserIdAndBookIsbn(user.getId(), isbn);
+        Collections.reverse(notes);
+
+        return notes.stream()
+                .map(Note::getContent)
+                .collect(Collectors.toList());
     }
 
 }
