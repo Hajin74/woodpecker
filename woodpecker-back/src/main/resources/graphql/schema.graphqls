@@ -10,6 +10,7 @@ type Mutation {
     saveNote(input: SaveNoteInput!): SaveNoteResponse!
     deleteNote(noteId: Long!): DeleteNoteResponse!
     getDetailNote(noteId: Long!): ReadDetailNoteResponse!
+    getNotes(isbn: String!): [ReadDetailNoteResponse]!
 }
 
 input SaveBookInput {
