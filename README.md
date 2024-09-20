@@ -1,19 +1,21 @@
 # 🪵 woodpecker
-- [프로젝트 구조](#프로젝트-구조)
-- [Quick Start](#quick-start)
-- [설계](#설계)
-  - [ERD](#erd)
-- [사용 기술](#사용-기술)
-- [API 명세서](#api-명세서)
+- [프로젝트 소개](#프로젝트-소개)
 - [구현 기능](#구현-기능)
+- [설치 및 실행 가이드](#설치-및-실행-가이드)
+- [API 명세서](#api-명세서)
 - [트러블슈팅](#트러블슈팅)
 
 <br>
 
-## 프로젝트 구조
+## 프로젝트 소개
+
+### 프로젝트 구조
+- 본 프로젝트는 woodpecker-back와 woodpecker-front로 이루어져있습니다.
+- woodpecker-front에서 카카오 소셜 로그인을 할 수 있으며, 로그인을 하면 쿠키에 JWT 토큰을 발급받습니다.
+- woodpecker-back에서 받아온 토큰을 이용하여 API 요청을 할 수 있습니다.
 
 <details>
-<summary>디렉토리 구조</summary>
+<summary>woodpecker-back 디렉토리 구조</summary>
   
 ```bash
 src
@@ -84,54 +86,14 @@ src
 ```
 </details>
 
+<details>
+<summary>woodpecker-back ERD</summary>
+  
+![erd](https://github.com/user-attachments/assets/8be5529d-afe7-4ca4-bd4d-5c0bbf7307d3)
 
-<br>
+</details>
 
-## Quick Start
-
-**1. 프로젝트 클론**
-  - 원하는 위치에서 프로젝트를 clone 합니다.
-    ```sh
-    $ git clone https://github.com/Hajin74/woodpecker.git
-    $ cd woodpecker
-    ```
-
- **2. application.properties 파일 추가**
- - `woodpecker/src/main/resources`에 제공된 `application.properties` 파일을 추가합니다.
-
- **3. 프로젝트 빌드**
- - 각각의 서버 디렉토리에서 다음 명령어를 실행하여 프로젝트를 빌드합니다
-     ```sh
-     $ ./gradlew build -x test
-     ```
-
- **4. woodpecker 서버 실행**
-   - `woodpecker` 서버 디렉토리로 이동한 후, 다음 명령어로 서버를 실행합니다.
-     ```sh
-     $ cd woodpecker/build/libs
-     $ java -jar woodpecker-0.0.1-SNAPSHOT.jar
-
-     ```
-</br>
-
-<br>
-
-## API 명세서
-
-### Postman
-실행이 되면, Postman으로 API를 호출할 수 있습니다.
-- [woodpecker Postman API 바로가기](https://documenter.getpostman.com/view/34589851/2sAXqs8Nqm)
-
-</br>
-
-## 설계
-
-### ERD
-![woodpecker ERD](https://github.com/user-attachments/assets/cce6032a-def9-4e04-a1a7-b441d4ebca59)
-
-<br>
-
-## 사용 기술
+### 기술 스택
 - Java 17
 - Spring Boot 3.X
 - Spring Data JPA (ORM)
@@ -180,6 +142,47 @@ src
     - 책 외부 공유와 함께, 공유를 한 사용자의 노트도 공유됩니다.
 
 <br>
+
+## 설치 및 실행 가이드
+
+이 프로젝트를 실행하려면 Java17, PostgreSQL 이 필요합니다.
+
+**1. 프로젝트 클론**
+  - 원하는 위치에서 프로젝트를 clone 합니다.
+    ```sh
+    $ git clone https://github.com/Hajin74/woodpecker.git
+    $ cd woodpecker
+    ```
+
+ **2. application.properties 파일 추가**
+ - `woodpecker/src/main/resources`에 제공된 `application.properties` 파일을 추가합니다.
+
+ **3. woodpecker-back 프로젝트 빌드**
+ - woodpecker-back 디렉토리로 이동하여, 다음 명령어를 실행하여 프로젝트를 빌드합니다
+     ```sh
+     $ ./gradlew build
+     ```
+
+ **4. woodpecker-back 서버 실행**
+   - woodpecker-back 디렉토리에서, 다음 명령어로 서버를 실행합니다.
+     ```sh
+     $ ./gradlew bootRun
+     ```
+ **5. woodpecker-front 프로젝트 실행**
+ - woodpecker-front 디렉토리로 이동하여, 다음 명령어를 실행하여 프로젝트를 실행합니다.
+     ```sh
+     $ npm install
+     $ npm start
+     ```
+<br>
+
+## API 명세서
+
+### Postman
+실행이 되면, Postman으로 API를 호출할 수 있습니다.
+- [woodpecker Postman API 바로가기](https://documenter.getpostman.com/view/34589851/2sAXqs8Nqm)
+
+</br>
 
 ## 트러블슈팅
 [✅ Kakao API 사용자 정보 호출 시 KakaoAccount가 null인 이슈](https://qwertyv.tistory.com/83)
