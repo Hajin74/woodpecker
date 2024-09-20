@@ -45,14 +45,12 @@ public class NoteResolver {
         return noteService.getDetailNote(userId, noteId);
     }
 
-//    @MutationMapping
-//    public List<ReadDetailNoteResponse> getNotes(@Argument("isbn") String isbn) {
-//        log.info("getNotes book - {}", isbn);
-//        List<String> result = noteService.getNotes(2L, isbn);
-//
-//        return result.stream()
-//                .map((r) -> new ReadDetailNoteResponse(true, r))
-//                .collect(Collectors.toList());
-//    }
+    @MutationMapping
+    public List<NoteDetailResponse> getNotesByBook(@Argument("isbn") String isbn, GraphQLContext context) {
+        Long userId = context.get("userId");
+        log.info("getNotesByBook - {}", isbn);
+
+        return noteService.getNotesByBook(userId, isbn);
+    }
 
 }

@@ -82,14 +82,14 @@ public class NoteService {
     }
 
     @Transactional(readOnly = true)
-    public List<String> getNotes(Long userId, String isbn) {
+    public List<NoteDetailResponse> getNotesByBook(Long userId, String isbn) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
         List<Note> notes = noteRepository.findAllByUserIdAndBookIsbn(user.getId(), isbn);
         Collections.reverse(notes);
 
         return notes.stream()
-                .map(Note::getContent)
+                .map((note) -> new NoteDetailResponse(note.getId(), note.getUser().getId(), note.getBook().getId(), note.getContent()))
                 .collect(Collectors.toList());
     }
 
