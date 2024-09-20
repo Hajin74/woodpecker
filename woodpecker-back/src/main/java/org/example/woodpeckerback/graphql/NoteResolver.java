@@ -26,16 +26,18 @@ public class NoteResolver {
     public SaveNoteResponse saveNote(@Argument("input") SaveNoteInput input, GraphQLContext context) {
         Long userId = context.get("userId");
         log.info("saveNote - isbn: {}, user: {}", input.getIsbn(), userId);
-        noteService.saveNote(userId, input.getIsbn(), input.getContent());
-        return new SaveNoteResponse(true, "success!");
+
+        noteService.saveNote(userId, input);
+        return new SaveNoteResponse(true, "(Isbn: " + input.getIsbn() + ") 에 적은 노트가 성공적으로 작성되었습니다.");
     }
 
     @MutationMapping
-    public DeleteNoteResponse deleteNote(@Argument("noteId") Long noteId) {
+    public DeleteNoteResponse deleteNote(@Argument("noteId") Long noteId, GraphQLContext context) {
+        Long userId = context.get("userId");
         log.info("deleteNote - {}", noteId);
-        noteService.deleteNote(2L, noteId);
+        noteService.deleteNote(userId, noteId);
 
-        return new DeleteNoteResponse(true, "success!");
+        return new DeleteNoteResponse(true, "(noteId: " +  noteId + ") 가 성공적으로 삭제되었습니다.");
     }
 
     @MutationMapping

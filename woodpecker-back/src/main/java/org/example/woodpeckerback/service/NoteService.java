@@ -2,6 +2,7 @@ package org.example.woodpeckerback.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.woodpeckerback.dto.SaveNoteInput;
 import org.example.woodpeckerback.entity.Book;
 import org.example.woodpeckerback.entity.Note;
 import org.example.woodpeckerback.entity.User;
@@ -29,12 +30,12 @@ public class NoteService {
     private final SaveBookRepository saveBookRepository;
 
     @Transactional
-    public void saveNote(Long userId, String isbn, String content) {
+    public void saveNote(Long userId, SaveNoteInput input) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        Book book = bookRepository.findByIsbn(isbn).orElseThrow(
+        Book book = bookRepository.findByIsbn(input.getIsbn()).orElseThrow(
                 () -> new CustomException(ErrorCode.BOOK_NOT_FOUND));
-        boolean isSavedBook = saveBookRepository.existsByUserIdAndBookIsbn(userId, isbn);
+        boolean isSavedBook = saveBookRepository.existsByUserIdAndBookIsbn(userId, input.getIsbn());
 
         if (!isSavedBook) {
             throw new CustomException(ErrorCode.BOOK_NOT_SAVED);
@@ -43,7 +44,7 @@ public class NoteService {
         Note newNote = Note.builder()
                 .book(book)
                 .user(user)
-                .content(content)
+                .content(input.getContent())
                 .build();
         noteRepository.save(newNote);
     }
