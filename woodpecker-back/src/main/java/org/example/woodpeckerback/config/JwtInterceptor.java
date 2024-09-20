@@ -33,7 +33,6 @@ public class JwtInterceptor implements WebGraphQlInterceptor {
 
         HttpHeaders headers = request.getHeaders();
         String authorization = extractAuthorizationToken(headers.getFirst(HttpHeaders.COOKIE));
-//        log.info("request authorization = {}", authorization);
 
         try {
             // JWT 토큰 검증

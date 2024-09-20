@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.woodpeckerback.dto.NaverBookApiResponse;
 import org.example.woodpeckerback.dto.NaverBookItem;
+import org.example.woodpeckerback.dto.SaveBookInput;
 import org.example.woodpeckerback.entity.Book;
 import org.example.woodpeckerback.entity.LikeBook;
 import org.example.woodpeckerback.entity.SaveBook;
@@ -70,19 +71,19 @@ public class BookService {
     }
 
     @Transactional
-    public boolean saveBook(Long userId, NaverBookItem naverBookItem) {
+    public void saveBook(Long userId, SaveBookInput input) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        Optional<Book> targetBook = bookRepository.findByIsbn(naverBookItem.isbn());
+        Optional<Book> targetBook = bookRepository.findByIsbn(input.getIsbn());
 
         Book book;
         if (targetBook.isEmpty()) {
             Book newBook = Book.builder()
-                    .title(naverBookItem.title())
-                    .author(naverBookItem.author())
-                    .description(naverBookItem.description())
-                    .publisher(naverBookItem.publisher())
-                    .isbn(naverBookItem.isbn())
+                    .title(input.getTitle())
+                    .author(input.getAuthor())
+                    .description(input.getDescription())
+                    .publisher(input.getPublisher())
+                    .isbn(input.getIsbn())
                     .build();
             bookRepository.save(newBook);
             book = newBook;
@@ -92,19 +93,18 @@ public class BookService {
 
         boolean alreadySaved = saveBookRepository.existsByUserIdAndBookId(userId, book.getId());
         if (alreadySaved) {
-            return false;
+            throw new CustomException(ErrorCode.BOOK_ALREADY_SAVED);
         } else {
             SaveBook saveBook = SaveBook.builder()
                     .user(user)
                     .book(book)
                     .build();
             saveBookRepository.save(saveBook);
-            return true;
         }
     }
 
     @Transactional
-    public boolean likeBook(Long userId, String isbn) {
+    public void likeBook(Long userId, String isbn) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -123,7 +123,6 @@ public class BookService {
                     .book(book)
                     .build();
             likeBookRepository.save(newLike);
-            return true;
         }
     }
 

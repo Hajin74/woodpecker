@@ -6,9 +6,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SaveBookInput {
-    private String isbn;
     private String title;
     private String author;
-    private String description;
     private String publisher;
+    private String description;
+    private String isbn;
 }

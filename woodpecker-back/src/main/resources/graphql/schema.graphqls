@@ -14,16 +14,25 @@ type Mutation {
 }
 
 input SaveBookInput {
-    isbn: String!
     title: String!
     author: String
-    description: String
     publisher: String
+    description: String
+    isbn: String!
 }
 
 input SaveNoteInput {
     isbn: String!
     content: String!
+}
+
+type Book {
+  id: Long!
+  isbn: String!
+  title: String!
+  author: String
+  content: String
+  publisher: String
 }
 
 type SaveBookResponse {

@@ -1,5 +1,6 @@
 package org.example.woodpeckerback.graphql;
 
+import graphql.GraphQLContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.woodpeckerback.dto.DeleteNoteResponse;
@@ -22,9 +23,10 @@ public class NoteResolver {
     private final NoteService noteService;
 
     @MutationMapping
-    public SaveNoteResponse saveNote(@Argument("input") SaveNoteInput input) {
-        log.info("saveNote - {}", input.getIsbn());
-        noteService.saveNote(2L, input.getIsbn(), input.getContent());
+    public SaveNoteResponse saveNote(@Argument("input") SaveNoteInput input, GraphQLContext context) {
+        Long userId = context.get("userId");
+        log.info("saveNote - isbn: {}, user: {}", input.getIsbn(), userId);
+        noteService.saveNote(userId, input.getIsbn(), input.getContent());
         return new SaveNoteResponse(true, "success!");
     }
 
@@ -53,4 +55,5 @@ public class NoteResolver {
                 .map((r) -> new ReadDetailNoteResponse(true, r))
                 .collect(Collectors.toList());
     }
+
 }
