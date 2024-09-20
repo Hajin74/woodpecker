@@ -189,4 +189,4 @@ src
 
 [✅ Spring Security + JWT + 카카오 소셜 로그인 구현하기](https://qwertyv.tistory.com/82)
 
-[✅ GraphQL에서 요청별로 인가를 어떻게 할 것인가?](https://qwertyv.tistory.com/81)
+[✅ GraphQL 커스텀 예외 처리하기](https://qwertyv.tistory.com/81)

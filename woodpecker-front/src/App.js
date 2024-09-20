@@ -27,7 +27,6 @@ const App = () => {
   return (
     <>
       <button onClick={onKakaoLogin}>카카오 로그인</button>
-      <button onClick={getData}>데이터 가져오기</button>
       <div id="data"></div>
     </>
   );
